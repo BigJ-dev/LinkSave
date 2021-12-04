@@ -1,8 +1,13 @@
 package com.merga.linkSave.repositories;
 
 import com.merga.linkSave.models.Link;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
-public interface LinkRepository extends JpaRepository<Link, Long> {
+@Repository
+public interface LinkRepository extends PagingAndSortingRepository<Link, Long> {
+    List<Link> findAll();
 
+    Link getById(Long linkId);
 }

@@ -7,13 +7,9 @@ import com.merga.linkSave.models.UserSearchCriteria;
 import dto.UserLinksDTO;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface UserActionService {
 
     User saveUser(User user);
-
-    User getUserByUserId(Long userId);
 
     User updateUserDetails(User user, Long userId);
 
@@ -25,13 +21,8 @@ public interface UserActionService {
 
     void deleteSiteLink(Long linkId, Long userId);
 
-    Page<User> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
+    Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
 
     UserLinksDTO getAllUserLinks(User user);
-
-//    List<UserLinkDTO> getAllUsers();
-
-
-//    String getUserNameByToken(String token);
 
 }

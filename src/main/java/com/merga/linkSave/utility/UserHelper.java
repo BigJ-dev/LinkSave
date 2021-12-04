@@ -10,11 +10,17 @@ import java.util.Date;
 
 public class UserHelper {
 
-    public static String getDateTime() {
+    public static String getDateTimeString() {
         DateFormat formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.now();
         Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
         return formatted.format(date);
+    }
+
+    public static Date getDateTimeObject() {
+        LocalDateTime dateTime = LocalDateTime.now();
+        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return date;
     }
 
     public static URI getUri(String uriPath) {

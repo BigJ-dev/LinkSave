@@ -20,9 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -47,14 +45,9 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public User getUserByUserId(Long userId) {
-        return getById(userId);
-    }
-
-    @Override
     public User updateUserDetails(User user, Long userId) {
+           User existingUser = userRepo.getById(userId);
 
-        User existingUser = getById(userId);
         if (existingUser.getId().equals(userId)) {
             existingUser.setUsername(user.getUsername());
             existingUser.setPassword(user.getPassword());
@@ -62,21 +55,21 @@ public class UserActionServiceImpl implements UserActionService {
         } else {
             log.error("This user don't exist in the db");
         }
-        return getById(userId);
+        return userRepo.getById(userId);
     }
 
     @Override
     public User getById(Long userId) {
-        return userRepo.findById(userId).get();
+        return userRepo.getById(userId);
     }
 
     @Override
     public Link addSiteLink(String siteName, String siteUrl, Long userId) {
-        User user = getById(1L);
-        String dateTime = UserHelper.getDateTime();
+        User user = userRepo.getById(userId);
+        Date dateTime = UserHelper.getDateTimeObject();
         Link site = new Link();
 
-        if (userRepo.existsById(1L)) {
+        if (userRepo.existsById(userId)) {
             site.setSiteName(siteName);
             site.setSiteUrl(siteUrl);
             site.setSavedDate(dateTime);
@@ -89,11 +82,11 @@ public class UserActionServiceImpl implements UserActionService {
 
     @Override
     public Link updateSiteLink(String siteName, String siteUrl, Long linkId, Long userId) {
-        User user = getById(userId);
+        User user = userRepo.getById(userId);
         Link site = siteLinkRepo.getById(linkId);
-        String dateTime = UserHelper.getDateTime();
+        Date dateTime = UserHelper.getDateTimeObject();
 
-        if (userRepo.existsById(1L) && siteLinkRepo.existsById(3L)) {
+        if (userRepo.existsById(userId) && siteLinkRepo.existsById(linkId)) {
             site.setSiteName(siteName);
             site.setSiteUrl(siteUrl);
             site.setLastModifiedDate(dateTime);
@@ -114,7 +107,7 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public Page<User> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria) {
+    public Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria) {
         return userCriteriaRepo.findAllWithFilters(userPage, userSearchCriteria);
     }
 
@@ -125,14 +118,14 @@ public class UserActionServiceImpl implements UserActionService {
 
     private UserLinksDTO convertEntityToLinksDto(User user) {
         UserLinksDTO userLinksDTO = new UserLinksDTO();
-        Map<String, String> userLinksMap = new HashMap<>();
+        Map<String,  Pair<String, Date>> userLinksMap = new HashMap<>();
         boolean hasUserAddedLink = siteLinkRepo.findAll().stream().anyMatch(link -> link.getUser().getId().equals(user.getId()));
 
         if (hasUserAddedLink) {
             siteLinkRepo.findAll()
                     .stream()
                     .filter(link -> link.getUser().getId().equals(user.getId()))
-                    .forEach(link -> userLinksMap.put(link.getSiteName(), link.getSiteUrl()));
+                    .forEach(link -> userLinksMap.put(link.getSiteName(), new Pair<>(link.getSiteUrl(), link.getSavedDate())));
             userLinksDTO.setUsername(user.getUsername());
             userLinksDTO.setSiteLinks(userLinksMap);
         } else {

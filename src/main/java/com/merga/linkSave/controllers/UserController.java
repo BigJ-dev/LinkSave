@@ -12,6 +12,7 @@ import dto.UserLinksDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,14 +27,19 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
+    private static final String URI_CONTENT = "/user/addLink";
     private final UserActionServiceImpl userActionService;
     private final UserRepository userRepo;
 
-    // @PostMapping("/user/save")
-//    public ResponseEntity<User> saveUser(@RequestBody User user) {
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-//        return ResponseEntity.created(uri).body(userService.saveUser(user));
-//    }
+    @PostMapping("/user/addLink")
+    @RequestMapping(value = URI_CONTENT,
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                 //   produces = CONTENT_TYPE,
+                     method = RequestMethod.POST)
+    public ResponseEntity<Link> addUserLink(@RequestBody Link link) {
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/addLink").toUriString());
+        return ResponseEntity.ok().body(userActionService.addSiteLink(link.getSiteName(), link.getSiteUrl(), 1L));
+    }
 
     @GetMapping("/users")
     public ResponseEntity<String> getUsers() {
@@ -41,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/usersPage")
-    public ResponseEntity<Page<User>> getUUsers(UserPage userPage, UserSearchCriteria userSearchCriteria) {
+    public ResponseEntity<Page<Link>> getUUsers(UserPage userPage, UserSearchCriteria userSearchCriteria) {
         return ResponseEntity.ok().body(userActionService.getUserNames(userPage,userSearchCriteria));
     }
 
