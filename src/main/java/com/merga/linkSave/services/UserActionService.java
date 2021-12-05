@@ -13,6 +13,8 @@ public interface UserActionService {
 
     User getById(Long userId);
 
+    Note addNote(String title, String note,Long userId);
+
     Link addSiteLink(String siteName, String siteUrl,Long userId);
 
     Link updateSiteLink(String siteName, String siteUrl, Long linkId, Long userId);

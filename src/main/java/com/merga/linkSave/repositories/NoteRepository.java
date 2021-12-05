@@ -1,6 +1,5 @@
 package com.merga.linkSave.repositories;
 
-import com.merga.linkSave.models.Link;
 import com.merga.linkSave.models.Note;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

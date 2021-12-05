@@ -65,6 +65,23 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
+    public Note addNote(String title, String note, Long userId) {
+        User user = userRepo.getById(userId);
+        Date dateTime = UserHelper.getDateTimeObject();
+        Note addNote = new Note();
+
+        if(userRepo.existsById(userId)) {
+            addNote.setTitle(title);
+            addNote.setNote(note);
+            addNote.setSavedDate(dateTime);
+            addNote.setUser(user);
+        } else {
+            log.error("we cant identify user, Please logout and log in");
+        }
+        return noteRepo.save(addNote);
+    }
+
+    @Override
     public Link addSiteLink(String siteName, String siteUrl, Long userId) {
         User user = userRepo.getById(userId);
         Date dateTime = UserHelper.getDateTimeObject();
@@ -76,7 +93,7 @@ public class UserActionServiceImpl implements UserActionService {
             site.setSavedDate(dateTime);
             site.setUser(user);
         } else {
-            log.error("We can't identify user , Please logout and login");
+            log.error("We can't identify user, Please logout and login");
         }
         return siteLinkRepo.save(site);
     }
@@ -114,7 +131,6 @@ public class UserActionServiceImpl implements UserActionService {
         }
         return siteLinkRepo.save(site);
     }
-
 
     @Override
     public void deleteNote(Long noteId, Long userId) {
