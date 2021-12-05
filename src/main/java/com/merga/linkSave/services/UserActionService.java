@@ -1,10 +1,8 @@
 package com.merga.linkSave.services;
 
-import com.merga.linkSave.models.Link;
-import com.merga.linkSave.models.User;
-import com.merga.linkSave.models.UserPage;
-import com.merga.linkSave.models.UserSearchCriteria;
+import com.merga.linkSave.models.*;
 import dto.UserLinksDTO;
+import dto.UserNotesDTO;
 import org.springframework.data.domain.Page;
 
 public interface UserActionService {
@@ -19,10 +17,16 @@ public interface UserActionService {
 
     Link updateSiteLink(String siteName, String siteUrl, Long linkId, Long userId);
 
-    void deleteSiteLink(Long linkId, Long userId);
-
-    Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
+    Note updateNote(String title, String note, Long noteId, Long userId);
 
     UserLinksDTO getAllUserLinks(User user);
+
+    UserNotesDTO getAllUserNotes(User user);
+
+    void deleteSiteLink(Long linkId, Long userId);
+
+    void deleteNote(Long NoteId, Long userId);
+
+   Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
 
 }

@@ -1,15 +1,14 @@
 package com.merga.linkSave.services;
 
-import com.merga.linkSave.models.Link;
-import com.merga.linkSave.models.User;
+import com.merga.linkSave.models.*;
 
-import com.merga.linkSave.models.UserPage;
-import com.merga.linkSave.models.UserSearchCriteria;
 import com.merga.linkSave.repositories.LinkRepository;
+import com.merga.linkSave.repositories.NoteRepository;
 import com.merga.linkSave.repositories.UserCriteriaRepository;
 import com.merga.linkSave.repositories.UserRepository;
 import com.merga.linkSave.utility.UserHelper;
 import dto.UserLinksDTO;
+import dto.UserNotesDTO;
 import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 
@@ -33,6 +33,7 @@ public class UserActionServiceImpl implements UserActionService {
     private final UserSearchCriteria userSearchCriteria;
     private final UserCriteriaRepository userCriteriaRepo;
     private final LinkRepository siteLinkRepo;
+    private final NoteRepository noteRepo;
     // private final PasswordEncoder passwordEncoder;
 
     //For testing
@@ -46,7 +47,7 @@ public class UserActionServiceImpl implements UserActionService {
 
     @Override
     public User updateUserDetails(User user, Long userId) {
-           User existingUser = userRepo.getById(userId);
+        User existingUser = userRepo.getById(userId);
 
         if (existingUser.getId().equals(userId)) {
             existingUser.setUsername(user.getUsername());
@@ -81,6 +82,23 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
+    public Note updateNote(String title, String note, Long noteId, Long userId) {
+        User user = userRepo.getById(userId);
+        Note existingNote = noteRepo.getById(noteId);
+        Date dateTime = UserHelper.getDateTimeObject();
+
+        if (userRepo.existsById(userId) && noteRepo.existsById(noteId)) {
+            existingNote.setTitle(title);
+            existingNote.setNote(note);
+            existingNote.setLastModifiedDate(dateTime);
+            existingNote.setUser(user);
+        } else {
+            log.error("Failed to update the note, Please refresh");
+        }
+        return noteRepo.save(existingNote);
+    }
+
+    @Override
     public Link updateSiteLink(String siteName, String siteUrl, Long linkId, Long userId) {
         User user = userRepo.getById(userId);
         Link site = siteLinkRepo.getById(linkId);
@@ -95,6 +113,16 @@ public class UserActionServiceImpl implements UserActionService {
             log.error("Failed to update the site link, Please refresh");
         }
         return siteLinkRepo.save(site);
+    }
+
+
+    @Override
+    public void deleteNote(Long noteId, Long userId) {
+        Note note = noteRepo.getById(noteId);
+        if (userRepo.existsById(userId) && noteRepo.existsById(noteId)) {
+            noteRepo.deleteById(noteId);
+            log.info("The note:" + note.getTitle() + " " + "has been deleted");
+        }
     }
 
     @Override
@@ -116,9 +144,32 @@ public class UserActionServiceImpl implements UserActionService {
         return convertEntityToLinksDto(user);
     }
 
+    @Override
+    public UserNotesDTO getAllUserNotes(User user) {
+        return convertEntityToNotesDto(user);
+    }
+
+    private UserNotesDTO convertEntityToNotesDto(User user) {
+        UserNotesDTO userNotesDTO = new UserNotesDTO();
+        Map<String, Pair<String, Date>> userNotesMap = new HashMap<>();
+        boolean hasUserAddedLink = noteRepo.findAll().stream().anyMatch(note -> note.getUser().getId().equals(user.getId()));
+
+        if (hasUserAddedLink) {
+            noteRepo.findAll()
+                    .stream()
+                    .filter(note -> note.getUser().getId().equals(user.getId()))
+                    .forEach(note -> userNotesMap.put(note.getTitle(), new Pair<>(note.getNote(), note.getSavedDate())));
+            userNotesDTO.setUsername(user.getUsername());
+            userNotesDTO.setNotes(userNotesMap);
+        } else {
+            log.error("Please add notes");
+        }
+        return userNotesDTO;
+    }
+
     private UserLinksDTO convertEntityToLinksDto(User user) {
         UserLinksDTO userLinksDTO = new UserLinksDTO();
-        Map<String,  Pair<String, Date>> userLinksMap = new HashMap<>();
+        Map<String, Pair<String, Date>> userLinksMap = new HashMap<>();
         boolean hasUserAddedLink = siteLinkRepo.findAll().stream().anyMatch(link -> link.getUser().getId().equals(user.getId()));
 
         if (hasUserAddedLink) {
@@ -129,7 +180,7 @@ public class UserActionServiceImpl implements UserActionService {
             userLinksDTO.setUsername(user.getUsername());
             userLinksDTO.setSiteLinks(userLinksMap);
         } else {
-            log.error("You need to add at least on site link");
+            log.error("Please add website link");
         }
         return userLinksDTO;
     }

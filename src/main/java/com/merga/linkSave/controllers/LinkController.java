@@ -1,13 +1,12 @@
 package com.merga.linkSave.controllers;
 
+import Constant.RestEndPoint;
 import com.merga.linkSave.models.Link;
 import com.merga.linkSave.models.User;
 import com.merga.linkSave.models.UserPage;
 import com.merga.linkSave.models.UserSearchCriteria;
-import com.merga.linkSave.repositories.LinkRepository;
 import com.merga.linkSave.repositories.UserRepository;
 import com.merga.linkSave.services.UserActionServiceImpl;
-import com.merga.linkSave.utility.UserHelper;
 import dto.UserLinksDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,30 +14,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
-
-    private static final String URI_CONTENT = "/user/addLink";
+public class LinkController {
+    public static final String URI_ADD_LINK = "/user/addLink";
+    public static final String URI_GET_USER_LINKS = "/user/getUserLinks";
     private final UserActionServiceImpl userActionService;
     private final UserRepository userRepo;
 
-    @PostMapping("/user/addLink")
-    @RequestMapping(value = URI_CONTENT,
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                 //   produces = CONTENT_TYPE,
-                     method = RequestMethod.POST)
+    @RequestMapping(value = URI_ADD_LINK,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+           // produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
     public ResponseEntity<Link> addUserLink(@RequestBody Link link) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/addLink").toUriString());
         return ResponseEntity.ok().body(userActionService.addSiteLink(link.getSiteName(), link.getSiteUrl(), 1L));
+    }
+
+//    @RequestMapping(value = URI_GET_USER_LINKS,
+//            consumes = MediaType.APPLICATION_JSON_VALUE,
+//         //   produces = MediaType.APPLICATION_JSON_VALUE,
+//            method = RequestMethod.GET)
+    @GetMapping("/user/getUserLinks")
+    public ResponseEntity<UserLinksDTO> getUserLinks() {
+        User user = userActionService.getById(1L);
+        return ResponseEntity.ok().body(userActionService.getAllUserLinks(user));
     }
 
     @GetMapping("/users")
@@ -48,14 +50,9 @@ public class UserController {
 
     @GetMapping("/usersPage")
     public ResponseEntity<Page<Link>> getUUsers(UserPage userPage, UserSearchCriteria userSearchCriteria) {
-        return ResponseEntity.ok().body(userActionService.getUserNames(userPage,userSearchCriteria));
+        return ResponseEntity.ok().body(userActionService.getUserNames(userPage, userSearchCriteria));
     }
 
-    @GetMapping("/usersLink")
-    public ResponseEntity<UserLinksDTO> getLinkUsers() {
-        User user = userActionService.getById(1L);
-        return ResponseEntity.ok().body(userActionService.getAllUserLinks(user));
-    }
 
 //    @GetMapping("/activeUsers")
 //    public ResponseEntity<List<UserDetails>> getAllLoggedInUsers() {
