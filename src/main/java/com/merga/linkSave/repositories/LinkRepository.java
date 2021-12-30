@@ -8,6 +8,5 @@ import java.util.List;
 @Repository
 public interface LinkRepository extends PagingAndSortingRepository<Link, Long> {
     List<Link> findAll();
-
     Link getById(Long linkId);
 }

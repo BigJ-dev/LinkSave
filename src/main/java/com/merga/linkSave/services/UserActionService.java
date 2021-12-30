@@ -5,6 +5,9 @@ import dto.UserLinksDTO;
 import dto.UserNotesDTO;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.Map;
+
 public interface UserActionService {
 
     User saveUser(User user);
@@ -17,15 +20,17 @@ public interface UserActionService {
 
     Link addSiteLink(String siteName, String siteUrl,Long userId);
 
+    Link getSiteLink(Long linkId,Long userId);
+
     Link updateSiteLink(String siteName, String siteUrl, Long linkId, Long userId);
 
     Note updateNote(String title, String note, Long noteId, Long userId);
 
-    UserLinksDTO getAllUserLinks(User user);
+    List<UserLinksDTO> getAllUserLinks(User user);
 
-    UserNotesDTO getAllUserNotes(User user);
+    Map<String, List<UserNotesDTO>> getAllUserNotes(User user);
 
-    void deleteSiteLink(Long linkId, Long userId);
+    String deleteSiteLink(Long linkId, Long userId);
 
     void deleteNote(Long NoteId, Long userId);
 

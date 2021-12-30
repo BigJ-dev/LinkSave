@@ -70,7 +70,7 @@ public class UserActionServiceImpl implements UserActionService {
         Date dateTime = UserHelper.getDateTimeObject();
         Note addNote = new Note();
 
-        if(userRepo.existsById(userId)) {
+        if (userRepo.existsById(userId)) {
             addNote.setTitle(title);
             addNote.setNote(note);
             addNote.setSavedDate(dateTime);
@@ -85,17 +85,28 @@ public class UserActionServiceImpl implements UserActionService {
     public Link addSiteLink(String siteName, String siteUrl, Long userId) {
         User user = userRepo.getById(userId);
         Date dateTime = UserHelper.getDateTimeObject();
-        Link site = new Link();
+        Link addSite = new Link();
 
         if (userRepo.existsById(userId)) {
-            site.setSiteName(siteName);
-            site.setSiteUrl(siteUrl);
-            site.setSavedDate(dateTime);
-            site.setUser(user);
+            addSite.setSiteName(siteName);
+            addSite.setSiteUrl(siteUrl);
+            addSite.setSavedDate(dateTime);
+            addSite.setUser(user);
         } else {
             log.error("We can't identify user, Please logout and login");
         }
-        return siteLinkRepo.save(site);
+        return siteLinkRepo.save(addSite);
+    }
+
+    @Override
+    public Link getSiteLink(Long linkId, Long userId) {
+        Link site = null;
+        if (userRepo.existsById(userId) && siteLinkRepo.existsById(linkId)) {
+            site = siteLinkRepo.findById(linkId).get();
+        } else {
+            log.error("site link don't exist");
+        }
+        return site;
     }
 
     @Override
@@ -142,12 +153,14 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public void deleteSiteLink(Long linkId, Long userId) {
+    public String deleteSiteLink(Long linkId, Long userId) {
         Link site = siteLinkRepo.getById(linkId);
+        String deletedItem = null;
         if (userRepo.existsById(userId) && siteLinkRepo.existsById(linkId)) {
             siteLinkRepo.deleteById(linkId);
-            log.info("The site link:" + site.getSiteName() + " " + "is deleted");
+            deletedItem = "The siteLink:" + " " + site.getSiteName() + " " + "has been deleted.";
         }
+        return deletedItem;
     }
 
     @Override
@@ -156,49 +169,45 @@ public class UserActionServiceImpl implements UserActionService {
     }
 
     @Override
-    public UserLinksDTO getAllUserLinks(User user) {
+    public List<UserLinksDTO> getAllUserLinks(User user) {
         return convertEntityToLinksDto(user);
     }
 
-    @Override
-    public UserNotesDTO getAllUserNotes(User user) {
-        return convertEntityToNotesDto(user);
-    }
-
-    private UserNotesDTO convertEntityToNotesDto(User user) {
-        UserNotesDTO userNotesDTO = new UserNotesDTO();
-        Map<String, Pair<String, Date>> userNotesMap = new HashMap<>();
-        boolean hasUserAddedLink = noteRepo.findAll().stream().anyMatch(note -> note.getUser().getId().equals(user.getId()));
-
-        if (hasUserAddedLink) {
-            noteRepo.findAll()
-                    .stream()
-                    .filter(note -> note.getUser().getId().equals(user.getId()))
-                    .forEach(note -> userNotesMap.put(note.getTitle(), new Pair<>(note.getNote(), note.getSavedDate())));
-            userNotesDTO.setUsername(user.getUsername());
-            userNotesDTO.setNotes(userNotesMap);
-        } else {
-            log.error("Please add notes");
-        }
-        return userNotesDTO;
-    }
-
-    private UserLinksDTO convertEntityToLinksDto(User user) {
-        UserLinksDTO userLinksDTO = new UserLinksDTO();
-        Map<String, Pair<String, Date>> userLinksMap = new HashMap<>();
+    private List<UserLinksDTO> convertEntityToLinksDto(User user) {
+        List<UserLinksDTO> userLinksDTO = new ArrayList<>();
         boolean hasUserAddedLink = siteLinkRepo.findAll().stream().anyMatch(link -> link.getUser().getId().equals(user.getId()));
 
         if (hasUserAddedLink) {
             siteLinkRepo.findAll()
                     .stream()
                     .filter(link -> link.getUser().getId().equals(user.getId()))
-                    .forEach(link -> userLinksMap.put(link.getSiteName(), new Pair<>(link.getSiteUrl(), link.getSavedDate())));
-            userLinksDTO.setUsername(user.getUsername());
-            userLinksDTO.setSiteLinks(userLinksMap);
+                    .forEach(link -> userLinksDTO.add(new UserLinksDTO(link.getId(), link.getSiteName(), link.getSiteUrl(), link.getSavedDate())));
         } else {
             log.error("Please add website link");
         }
         return userLinksDTO;
+    }
+
+    @Override
+    public Map<String, List<UserNotesDTO>> getAllUserNotes(User user) {
+        return convertEntityToNotesDto(user);
+    }
+
+    private Map<String, List<UserNotesDTO>> convertEntityToNotesDto(User user) {
+        List<UserNotesDTO> userLinksDTO = new ArrayList<>();
+        Map<String, List<UserNotesDTO>> userLinksMap = new HashMap<>();
+        boolean hasUserAddedLink = noteRepo.findAll().stream().anyMatch(note -> note.getUser().getId().equals(user.getId()));
+
+        if (hasUserAddedLink) {
+            noteRepo.findAll()
+                    .stream()
+                    .filter(note -> note.getUser().getId().equals(user.getId()))
+                    .forEach(note -> userLinksDTO.add(new UserNotesDTO(note.getTitle(), note.getNote(), note.getSavedDate())));
+            userLinksMap.put(user.getUsername(), userLinksDTO);
+        } else {
+            log.error("Please add notes");
+        }
+        return userLinksMap;
     }
 
 

@@ -1,11 +1,17 @@
 package dto;
-import javafx.util.Pair;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
-import java.util.Map;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserLinksDTO {
-    private String username;
-    private Map<String, Pair<String, Date>> siteLinks;
+    private Long id;
+    private String siteName;
+    private String siteUrl;
+    private Date savedDate;
 }

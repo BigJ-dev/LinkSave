@@ -20,7 +20,7 @@ public class LinkSaveApplication {
     @Bean
 	CommandLineRunner run(UserActionService userActionService) {
         return args -> {
-			userActionService.saveUser(new User(null, "C", "1994", "bigjayseSegoapa28@gmail.com","0712139561",null,null));
+			userActionService.saveUser(new User(null, "Tshepo", "1994", "bigjayseSegoapa28@gmail.com","0712139561",null,null));
 			userActionService.saveUser(new User(null, "B", "1994", "bigjayseSegoapa28@gmail.com","0712139561",null,null));
 			userActionService.saveUser(new User(null, "A", "1994", "bigjayseSegoapa28@gmail.com","0712139561",null,null));
 			userActionService.addSiteLink("YouTube","https://www.youtube.com/watch?v=mVoEYmTQYlU&list=RDMMAy3P4M94ebM&index=8",1L);
