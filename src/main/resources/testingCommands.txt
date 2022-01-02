@@ -1,0 +1,51 @@
+#build docker image command
+#docker build -t linkSave:latest .
+#java -jar linkSave-0.0.1-SNAPSHOT.jar
+#docker run -p8002:8080 08d
+#================================
+  #"192.168.88.16:8080"
+  #"172.17.0.2:8080"
+  #"localhost:8002"
+  #docker.host.internal:8080
+#========================================
+  ======================
+  #management.endpoints.web.exposure.include=*
+  #management.endpoint.health.show-details=always
+
+  #spring.datasource.url=jdbc:postgresql://postgresqldb:5432/linkSaveDb
+  #spring.datasource.username=postgres
+  #spring.datasource.password=postgres
+  #spring.jpa.show-sql=true
+  #spring.jpa.generate-ddl=true
+  #spring.jpa.hibernate.ddl-auto=create
+ #=================================================
+  #    dependes_on:
+  #      - "prom/prometheus"
+  #  prometheus:
+  #    image: prom/prometheus
+  #    ports:
+  #      - "9090:9090"
+  #    volumes:
+  #      - ./src/main/resources/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  #  grafana:
+  #    image: grafana/grafana
+  #    ports:
+  #      - "3000:3000"
+  #  app:
+  #    container_name: springboot-postgresql
+  #    image: springboot-postgresql
+  #    build: ./
+  #    ports:
+  #      - "8080:8080"
+  #    depends_on:
+  #      - postgresqldb
+  #  postgresqldb:
+  #    image: postgres
+  #    ports:
+  #      - "5432:5432"
+  #    environment:
+  #      - POSTGRES_PASSWORD=postgres
+  #      - POSTGRES_USER=postgres
+  #      - POSTGRES_DB=employeedb
+
+
