@@ -73,7 +73,7 @@ const [userLinks, setUserLinks]=useState([])
 const getUserLinks = async () => {
 
 try {
-  const userLinksFromApi = await Axios.get("http://localhost:8080/api/link/user/getUserLinks")
+  const userLinksFromApi = await Axios.get("http://host.docker.internal:8080/api/link/user/getUserLinks")
   setUserLinks(userLinksFromApi.data); 
 } catch (err) {
     console.error(err.message);
@@ -85,7 +85,7 @@ try {
   },[])  
   
   function submit(e){
-    Axios.post("http://localhost:8080/api/link/user/addLink",{
+    Axios.post("http://host.docker.internal:8080/api/link/user/addLink",{
       siteName: data.siteName,
       siteUrl: data.siteUrl
     })
@@ -97,7 +97,7 @@ try {
 
   function updateUserLink(){
     if(data.id != null){
-      Axios.put(`http://localhost:8080/api/link/user/updateUserLink/${data.id}`,{
+      Axios.put(`http://host.docker.internal:8080/api/link/user/updateUserLink/${data.id}`,{
         siteName: data.siteName,
         siteUrl: data.siteUrl
       })
@@ -107,7 +107,7 @@ try {
       })
       Router.replace(Router.asPath);
     }else{
-      alert("Please select the link you want to edit")
+      alert("Please select the link you want to Edit or add a link")
     }
  
   }
@@ -117,7 +117,7 @@ try {
   }
 
   function getUserLinkAndSetOnInput(userLink){
-      Axios.get(`http://localhost:8080/api/link/user/getUserLink/${userLink.id}`)
+      Axios.get(`http://host.docker.internal:8080/api/link/user/getUserLink/${userLink.id}`)
       .then(res=>{
         if(res.data !=null){
           console.log(userLink.id)
@@ -130,7 +130,7 @@ try {
 
   function deleteUserLink(linkId,siteName){
     if (window.confirm(`Delete the item "${siteName}" ?`)) {
-      Axios.delete(`http://localhost:8080/api/link/user/deleteUserLink/${linkId}`)
+      Axios.delete(`http://host.docker.internal:8080/api/link/user/deleteUserLink/${linkId}`)
       .then(res=>{
         if(res.data !=null){
           //  alert(`The siteLink: ${siteName} has been deleted`)

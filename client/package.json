@@ -1,5 +1,5 @@
 {
-  "name": "one",
+  "name": "linksviave",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -38,7 +38,7 @@
     "xhr2": "0.1.4"
   },
   "scripts": {
-    "dev": "next",
+    "dev": "next dev -p 3030",
     "build": "next build",
     "start": "next start",
     "now-build": "next build"
