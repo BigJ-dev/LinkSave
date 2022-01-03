@@ -1,6 +1,7 @@
 version: '3.7'
 services:
   linksave:
+    image: linksavehost-img
     build: .
     ports:
     - "8080:8080"
@@ -19,3 +20,10 @@ services:
     ports:
       - "3000:3000"
     container_name: grafana
+
+  client:
+    image: linksave-client-img
+    build: ./src/main/resources/dockerFile-frontEnd/
+    ports:
+      - "3030:3030"
+    container_name: linksave-client

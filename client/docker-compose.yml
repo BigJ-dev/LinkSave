@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+
+  client:
+    image: linksave-client-img
+    build: .
+    ports:
+      - "3030:3030"
+    container_name: linksave-client
