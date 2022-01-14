@@ -3,6 +3,7 @@ if (typeof require !== 'undefined') {
 }
 
 const withLess = require('@zeit/next-less'),
+
   nextConfig = {
     //target: 'serverless',
     env: {
@@ -15,6 +16,9 @@ const withLess = require('@zeit/next-less'),
     },
     lessLoaderOptions: {
       javascriptEnabled: true
+    },
+    resolve: {
+      extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.less'],
     },
     webpack: config => config
   };

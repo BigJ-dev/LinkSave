@@ -46,7 +46,7 @@ public class LinkController {
     @RequestMapping(value = "/user/getUserLink/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Link> getUserLink(@PathVariable("id") Long linkId) {
         User user = userActionService.getById(1L);
-        return ResponseEntity.ok().body(userActionService.getSiteLink(linkId,user.getId()));
+        return ResponseEntity.ok().body(userActionService.getSiteLink(4L,user.getId()));
     }
 
     @RequestMapping(value = "/user/deleteUserLink/{id}", method = RequestMethod.DELETE, produces = "application/json")
@@ -66,10 +66,10 @@ public class LinkController {
         return ResponseEntity.ok().body(userActionService.getById(1L).getUsername());
     }
 
-    @GetMapping("/usersPage")
-    public ResponseEntity<Page<Link>> getUUsers(UserPage userPage, UserSearchCriteria userSearchCriteria) {
-        return ResponseEntity.ok().body(userActionService.getUserNames(userPage, userSearchCriteria));
-    }
+//    @GetMapping("/usersPage")
+//    public ResponseEntity<Page<Link>> getUUsers(UserPage userPage, UserSearchCriteria userSearchCriteria) {
+//        return ResponseEntity.ok().body(userActionService.getUserNames(userPage, userSearchCriteria));
+//    }
 
 
 //    @GetMapping("/activeUsers")

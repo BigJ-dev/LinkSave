@@ -4,7 +4,6 @@ import com.merga.linkSave.models.*;
 
 import com.merga.linkSave.repositories.LinkRepository;
 import com.merga.linkSave.repositories.NoteRepository;
-import com.merga.linkSave.repositories.UserCriteriaRepository;
 import com.merga.linkSave.repositories.UserRepository;
 import com.merga.linkSave.utility.UserHelper;
 import dto.UserLinksDTO;
@@ -30,8 +29,8 @@ import java.util.*;
 public class UserActionServiceImpl implements UserActionService {
     //UserDetailsService
     private final UserRepository userRepo;
-    private final UserSearchCriteria userSearchCriteria;
-    private final UserCriteriaRepository userCriteriaRepo;
+    //private final UserSearchCriteria userSearchCriteria;
+    //private final UserCriteriaRepository userCriteriaRepo;
     private final LinkRepository siteLinkRepo;
     private final NoteRepository noteRepo;
     // private final PasswordEncoder passwordEncoder;
@@ -93,7 +92,7 @@ public class UserActionServiceImpl implements UserActionService {
             addSite.setSavedDate(dateTime);
             addSite.setUser(user);
         } else {
-            log.error("We can't identify user, Please logout and login");
+            log.error("User don't exist in the db");
         }
         return siteLinkRepo.save(addSite);
     }
@@ -102,7 +101,7 @@ public class UserActionServiceImpl implements UserActionService {
     public Link getSiteLink(Long linkId, Long userId) {
         Link site = null;
         if (userRepo.existsById(userId) && siteLinkRepo.existsById(linkId)) {
-            site = siteLinkRepo.findById(linkId).get();
+             site = siteLinkRepo.getById(linkId);
         } else {
             log.error("site link don't exist");
         }
@@ -163,10 +162,10 @@ public class UserActionServiceImpl implements UserActionService {
         return deletedItem;
     }
 
-    @Override
-    public Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria) {
-        return userCriteriaRepo.findAllWithFilters(userPage, userSearchCriteria);
-    }
+//    @Override
+//    public Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria) {
+//        return userCriteriaRepo.findAllWithFilters(userPage, userSearchCriteria);
+//    }
 
     @Override
     public List<UserLinksDTO> getAllUserLinks(User user) {

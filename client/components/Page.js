@@ -27,7 +27,7 @@ const Page = ({ router, children }) => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 0.001);
   }, [loading]);
 
   return (

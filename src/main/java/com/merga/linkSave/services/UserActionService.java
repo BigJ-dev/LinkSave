@@ -34,6 +34,6 @@ public interface UserActionService {
 
     void deleteNote(Long NoteId, Long userId);
 
-   Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
+//   Page<Link> getUserNames(UserPage userPage, UserSearchCriteria userSearchCriteria);
 
 }
